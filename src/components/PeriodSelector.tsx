@@ -24,7 +24,6 @@ export function PeriodSelector({
     referenceDate,
     onPeriodTypeChange,
     onReferenceDateChange,
-    weekStartsOn,
 }: PeriodSelectorProps) {
     const formatDateLabel = (): string => {
         switch (periodType) {

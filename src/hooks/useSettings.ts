@@ -1,6 +1,5 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/database';
-import type { Settings } from '../models/Settings';
 import { DEFAULT_SETTINGS } from '../models/Settings';
 
 export function useSettings() {
