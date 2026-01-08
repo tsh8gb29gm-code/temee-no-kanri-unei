@@ -1,27 +1,65 @@
 <!DOCTYPE html>
 <html lang="ja">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-    <meta name="theme-color" content="#1a1a2e" />
-    <meta name="description" content="てめえの管理運営 - 作業時間集計ツール" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
-    <title>てめえの管理運営</title>
-    <script>
-      window.onerror = function(msg, src, lineno, colno, error) {
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#1a1a2e" />
+  <meta name="description" content="てめえの管理運営 - 作業時間集計ツール" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <title>てめえの管理運営</title>
+  <script>
+    (function () {
+      var oldLog = console.log;
+      var oldError = console.error;
+      var container = document.createElement('div');
+      container.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:9999;pointer-events:none;overflow:auto;padding-top:40px;';
+      document.body.appendChild(container);
+
+      function showMsg(msg, color) {
         var div = document.createElement('div');
-        div.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:#000;color:red;z-index:9999;padding:20px;white-space:pre-wrap;overflow:auto;font-family:monospace;';
-        div.innerHTML = '<h1>Global Error</h1><h2>' + msg + '</h2><p>' + src + ':' + lineno + '</p><pre>' + (error ? error.stack : '') + '</pre>';
-        document.body.appendChild(div);
+        div.style.cssText = 'background:rgba(0,0,0,0.8);color:' + color + ';padding:5px;margin:2px;font-family:monospace;pointer-events:auto;';
+        div.innerText = msg;
+        container.appendChild(div);
+      }
+
+      window.onerror = function (msg, src, lineno, colno, error) {
+        showMsg('ERROR: ' + msg + ' (' + src + ':' + lineno + ')', '#ff4444');
+        if (error) showMsg(error.stack, '#ffaaaa');
       };
-    </script>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+
+      window.addEventListener('unhandledrejection', function (event) {
+        showMsg('UNHANDLED PROMISE: ' + event.reason, '#ff8800');
+      });
+
+      console.log = function () {
+        var args = Array.from(arguments).map(String).join(' ');
+        showMsg('LOG: ' + args, '#88ff88');
+        oldLog.apply(console, arguments);
+      };
+
+      console.error = function () {
+        var args = Array.from(arguments).map(String).join(' ');
+        showMsg('CONSOLE ERROR: ' + args, '#ff4444');
+        oldError.apply(console, arguments);
+      };
+
+      // Show banner to confirm new version loaded
+      var banner = document.createElement('div');
+      banner.style.cssText = 'position:fixed;top:0;left:0;right:0;background:purple;color:white;text-align:center;padding:5px;z-index:10000;font-weight:bold;';
+      banner.innerText = 'DEBUG MODE V2 - WAITING FOR ERRORS...';
+      document.body.appendChild(banner);
+    })();
+  </script>
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+
 </html>
