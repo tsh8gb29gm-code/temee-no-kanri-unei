@@ -8,7 +8,6 @@ interface PeriodSelectorProps {
     referenceDate: Date;
     onPeriodTypeChange: (type: PeriodType) => void;
     onReferenceDateChange: (date: Date) => void;
-    weekStartsOn: 0 | 1;
 }
 
 const periodLabels: Record<PeriodType, string> = {

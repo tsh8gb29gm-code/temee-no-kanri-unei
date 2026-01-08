@@ -63,7 +63,6 @@ export function Dashboard() {
                 referenceDate={referenceDate}
                 onPeriodTypeChange={setPeriodType}
                 onReferenceDateChange={setReferenceDate}
-                weekStartsOn={settings.weekStartsOn}
             />
 
             <div className="kpi-grid">
