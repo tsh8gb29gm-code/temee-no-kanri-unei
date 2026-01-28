@@ -13,8 +13,8 @@ import { ConfirmDialog } from '../components/ConfirmDialog';
 import './Dashboard.css';
 
 export function Dashboard() {
-    const { items, allItems, getItemById } = useItems();
-    const { sessions, endSession } = useSessions();
+    const { items, allItems, getItemById, deleteItem } = useItems();
+    const { sessions, endSession, deleteSessionsByItemId } = useSessions();
     const { settings } = useSettings();
     const {
         runningSession,
@@ -27,6 +27,7 @@ export function Dashboard() {
 
     const [periodType, setPeriodType] = useState<PeriodType>('day');
     const [referenceDate, setReferenceDate] = useState(new Date());
+    const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
     const aggregation = useAggregation(
         sessions,
@@ -55,6 +56,20 @@ export function Dashboard() {
             endSession(runningSession.id);
         }
     };
+
+    const handleDeleteItem = async (itemId: string) => {
+        setDeleteTargetId(itemId);
+    };
+
+    const confirmDeleteItem = async () => {
+        if (deleteTargetId) {
+            await deleteSessionsByItemId(deleteTargetId);
+            await deleteItem(deleteTargetId);
+            setDeleteTargetId(null);
+        }
+    };
+
+    const deleteTargetName = deleteTargetId ? getItemById(deleteTargetId)?.name : '';
 
     return (
         <div className="dashboard">
@@ -108,6 +123,7 @@ export function Dashboard() {
                                 color={item.color}
                                 isActive={runningSession?.itemId === item.id}
                                 onClick={() => handleItemClick(item.id)}
+                                onDelete={() => handleDeleteItem(item.id)}
                             />
                         ))}
                     </div>
@@ -122,6 +138,16 @@ export function Dashboard() {
                 cancelLabel="キャンセル"
                 onConfirm={confirmSwitch}
                 onCancel={cancelSwitch}
+            />
+
+            <ConfirmDialog
+                isOpen={deleteTargetId !== null}
+                title="アイテムを完全に削除しますか？"
+                message={`「${deleteTargetName}」とその統計データ（移動・グラフ）がすべて削除されます。この操作は取り消せません。`}
+                confirmLabel="完全に削除する"
+                cancelLabel="キャンセル"
+                onConfirm={confirmDeleteItem}
+                onCancel={() => setDeleteTargetId(null)}
             />
         </div>
     );

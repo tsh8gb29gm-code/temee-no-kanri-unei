@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useItems } from '../hooks/useItems';
+import { useSessions } from '../hooks/useSessions';
 import { Modal } from '../components/Modal';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import type { Item } from '../models/Item';
@@ -13,12 +14,14 @@ const PRESET_COLORS = [
 ];
 
 export function Items() {
-    const { items, archivedItems, addItem, updateItem, archiveItem, restoreItem } = useItems();
+    const { items, archivedItems, addItem, updateItem, archiveItem, restoreItem, deleteItem } = useItems();
+    const { deleteSessionsByItemId } = useSessions();
 
     const [showArchived, setShowArchived] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingItem, setEditingItem] = useState<Item | null>(null);
     const [archiveTarget, setArchiveTarget] = useState<Item | null>(null);
+    const [deleteTarget, setDeleteTarget] = useState<Item | null>(null);
 
     // Form state
     const [formName, setFormName] = useState('');
@@ -63,6 +66,14 @@ export function Items() {
         setArchiveTarget(null);
     };
 
+    const handleConfirmDelete = async () => {
+        if (!deleteTarget) return;
+        await deleteSessionsByItemId(deleteTarget.id);
+        await deleteItem(deleteTarget.id);
+        setDeleteTarget(null);
+        setIsModalOpen(false);
+    };
+
     const displayItems = showArchived ? archivedItems : items;
 
     return (
@@ -101,12 +112,20 @@ export function Items() {
                             <span className="item-name">{item.name}</span>
                             <div className="item-actions">
                                 {showArchived ? (
-                                    <button
-                                        className="item-action restore"
-                                        onClick={() => restoreItem(item.id)}
-                                    >
-                                        復元
-                                    </button>
+                                    <>
+                                        <button
+                                            className="item-action restore"
+                                            onClick={() => restoreItem(item.id)}
+                                        >
+                                            復元
+                                        </button>
+                                        <button
+                                            className="item-action delete"
+                                            onClick={() => setDeleteTarget(item)}
+                                        >
+                                            削除
+                                        </button>
+                                    </>
                                 ) : (
                                     <>
                                         <button
@@ -172,6 +191,16 @@ export function Items() {
                     {formError && <p className="form-error">{formError}</p>}
 
                     <div className="form-actions">
+                        {editingItem && (
+                            <button
+                                type="button"
+                                className="form-button delete-link"
+                                onClick={() => setDeleteTarget(editingItem)}
+                            >
+                                完全に削除
+                            </button>
+                        )}
+                        <div style={{ flex: 1 }} />
                         <button
                             type="button"
                             className="form-button cancel"
@@ -194,6 +223,16 @@ export function Items() {
                 cancelLabel="キャンセル"
                 onConfirm={handleConfirmArchive}
                 onCancel={() => setArchiveTarget(null)}
+            />
+
+            <ConfirmDialog
+                isOpen={deleteTarget !== null}
+                title="アイテムを完全に削除しますか？"
+                message={`「${deleteTarget?.name}」とその統計データがすべて削除されます。この操作は取り消せません。`}
+                confirmLabel="完全に削除する"
+                cancelLabel="キャンセル"
+                onConfirm={handleConfirmDelete}
+                onCancel={() => setDeleteTarget(null)}
             />
         </div>
     );

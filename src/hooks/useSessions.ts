@@ -59,6 +59,10 @@ export function useSessions() {
             .toArray();
     };
 
+    const deleteSessionsByItemId = async (itemId: string): Promise<void> => {
+        await db.sessions.where('itemId').equals(itemId).delete();
+    };
+
     return {
         sessions: sessions ?? [],
         runningSession: runningSession ?? null,
@@ -66,6 +70,7 @@ export function useSessions() {
         updateSession,
         endSession,
         deleteSession,
+        deleteSessionsByItemId,
         getSessionsByDateRange,
     };
 }

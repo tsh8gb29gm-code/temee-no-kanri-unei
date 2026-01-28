@@ -61,7 +61,7 @@ export function BarChart({ data, items }: BarChartProps) {
         datasets: [
             {
                 label: '作業時間',
-                data: sortedData.map((d) => d.seconds / 3600), // Convert to hours
+                data: sortedData.map((d) => d.seconds / 60), // 元々は / 3600 (hours)
                 backgroundColor: sortedData.map((d, i) => getItemColor(d.itemId, i)),
                 borderRadius: 8,
                 borderSkipped: false,
@@ -80,8 +80,8 @@ export function BarChart({ data, items }: BarChartProps) {
             tooltip: {
                 callbacks: {
                     label: (context: { raw: unknown }) => {
-                        const hours = context.raw as number;
-                        const seconds = Math.round(hours * 3600);
+                        const minutes = context.raw as number;
+                        const seconds = Math.round(minutes * 60);
                         return formatDuration(seconds);
                     },
                 },
@@ -99,8 +99,8 @@ export function BarChart({ data, items }: BarChartProps) {
                 ticks: {
                     color: 'rgba(255, 255, 255, 0.7)',
                     callback: (value: number | string) => {
-                        const hours = Number(value);
-                        return `${hours}h`;
+                        const minutes = Number(value);
+                        return `${minutes}min`;
                     },
                 },
             },

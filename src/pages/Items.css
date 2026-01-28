@@ -124,13 +124,28 @@
     border-color: var(--color-danger);
 }
 
-.item-action.restore {
-    background: var(--color-success);
-    color: white;
+.item-action.delete {
+    background: transparent;
+    color: var(--color-danger);
+    border: 1px solid var(--color-border);
 }
 
-.item-action.restore:hover {
-    background: #059669;
+.item-action.delete:hover {
+    background: var(--color-danger);
+    color: white;
+    border-color: var(--color-danger);
+}
+
+.form-button.delete-link {
+    background: transparent;
+    color: var(--color-danger);
+    padding: 0.625rem 0;
+    font-size: 0.8125rem;
+    text-decoration: underline;
+}
+
+.form-button.delete-link:hover {
+    color: #dc2626;
 }
 
 .empty-message {

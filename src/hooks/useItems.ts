@@ -55,6 +55,10 @@ export function useItems() {
         await updateItem(id, { archived: false });
     };
 
+    const deleteItem = async (id: string): Promise<void> => {
+        await db.items.delete(id);
+    };
+
     const getItemById = (id: string): Item | undefined => {
         return allItems?.find((item) => item.id === id);
     };
@@ -67,6 +71,7 @@ export function useItems() {
         updateItem,
         archiveItem,
         restoreItem,
-        getItemById,
+        deleteItem,
+        getItemById: getItemById,
     };
 }
