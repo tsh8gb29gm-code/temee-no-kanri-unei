@@ -87,11 +87,6 @@ export function Dashboard() {
                     icon="⏱️"
                 />
                 <KPICard
-                    label="セッション数"
-                    value={aggregation.sessionCount.toString()}
-                    icon="📊"
-                />
-                <KPICard
                     label="最多アイテム"
                     value={topItemName}
                     icon="🏆"
