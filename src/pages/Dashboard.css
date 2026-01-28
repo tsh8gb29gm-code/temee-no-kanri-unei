@@ -39,16 +39,16 @@
 
 @media (max-width: 480px) {
     .dashboard {
-        gap: 0.5rem;
+        gap: 0.25rem;
     }
 
     .kpi-grid {
         grid-template-columns: 1fr;
-        gap: 0.5rem;
+        gap: 0.25rem;
     }
 
     .item-buttons-grid {
         grid-template-columns: repeat(2, 1fr);
-        gap: 0.5rem;
+        gap: 0.25rem;
     }
 }
