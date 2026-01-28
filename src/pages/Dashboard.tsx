@@ -72,7 +72,7 @@ export function Dashboard() {
     const deleteTargetName = deleteTargetId ? getItemById(deleteTargetId)?.name : '';
 
     return (
-        <div className="dashboard">
+        <div className={`dashboard ${runningSession ? 'timer-active' : ''}`}>
             <PeriodSelector
                 periodType={periodType}
                 referenceDate={referenceDate}
