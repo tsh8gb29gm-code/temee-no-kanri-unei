@@ -1,0 +1,73 @@
+// --- Widget.swift に貼り付けるコード ---
+
+import WidgetKit
+import SwiftUI
+
+struct TimerEntry: TimelineEntry {
+    let date: Date
+    let itemName: String
+    let isRunning: Bool
+}
+
+struct Provider: TimelineProvider {
+    func placeholder(in context: Context) -> TimerEntry {
+        TimerEntry(date: Date(), itemName: "未計測", isRunning: false)
+    }
+
+    func getSnapshot(in context: Context, completion: @escaping (TimerEntry) -> ()) {
+        completion(TimerEntry(date: Date(), itemName: "サンプル", isRunning: true))
+    }
+
+    func getTimeline(in context: Context, completion: @escaping (Timeline<TimerEntry>) -> ()) {
+        let standard = UserDefaults.standard
+        let name = standard.string(forKey: "curr_item") ?? "未計測"
+        let running = standard.bool(forKey: "is_running")
+        
+        let entry = TimerEntry(date: Date(), itemName: name, isRunning: running)
+        let timeline = Timeline(entries: [entry], policy: .atEnd)
+        completion(timeline)
+    }
+}
+
+struct MyWidgetEntryView : View {
+    var entry: Provider.Entry
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 5) {
+            Text("てめえの管理運営")
+                .font(.caption2)
+                .foregroundColor(.secondary)
+            
+            if entry.isRunning {
+                Text("🔴 計測中")
+                    .font(.caption)
+                    .fontWeight(.bold)
+                    .foregroundColor(.red)
+                Text(entry.itemName)
+                    .font(.headline)
+            } else {
+                Text("⚪️ 待機中")
+                    .font(.caption)
+                    .foregroundColor(.gray)
+                Text("作業を開始しましょう")
+                    .font(.subheadline)
+            }
+        }
+        .containerBackground(for: .widget) {
+            Color(red: 0.1, green: 0.1, blue: 0.2)
+        }
+    }
+}
+
+struct MyWidget: Widget {
+    let kind: String = "TemeeWidget"
+
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: kind, provider: Provider()) { entry in
+            MyWidgetEntryView(entry: entry)
+        }
+        .configurationDisplayName("現在の作業")
+        .description("計測中のアイテムをホーム画面に表示します。")
+        .supportedFamilies([.systemSmall, .systemMedium])
+    }
+}
