@@ -1,0 +1,41 @@
+import SwiftUI
+import WebKit
+
+struct ContentView: View {
+    var body: some View {
+        MyWebView()
+            .edgesIgnoringSafeArea(.all)
+    }
+}
+
+struct MyWebView: UIViewRepresentable {
+    func makeCoordinator() -> Coordinator {
+        Coordinator()
+    }
+    func makeUIView(context: Context) -> WKWebView {
+        let config = WKWebViewConfiguration()
+        config.userContentController.add(context.coordinator, name: "timerHandler")
+        return WKWebView(frame: .zero, configuration: config)
+    }
+    func updateUIView(_ webView: WKWebView, context: Context) {
+        if webView.url == nil {
+            let url = URL(string: "https://temee-no-kanri-unei.vercel.app/")!
+            webView.load(URLRequest(url: url))
+        }
+    }
+    class Coordinator: NSObject, WKScriptMessageHandler {
+        func userContentController(_ ucc: WKUserContentController, didReceive msg: WKScriptMessage) {
+            if let dict = msg.body as? [String: Any] {
+                let action = dict["action"] as? String ?? ""
+                let itemName = dict["itemName"] as? String ?? ""
+                let df = UserDefaults.standard
+                if action == "start" {
+                    df.set(itemName, forKey: "curr_item")
+                    df.set(true, forKey: "is_running")
+                } else {
+                    df.set(false, forKey: "is_running")
+                }
+            }
+        }
+    }
+}
