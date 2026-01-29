@@ -54,6 +54,7 @@ export function Dashboard() {
     const handleStopTimer = () => {
         if (runningSession) {
             endSession(runningSession.id);
+            handleStopNative();
         }
     };
 
